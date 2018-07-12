@@ -2,8 +2,8 @@ export class Pais{
 
   constructor(
     public id:number,
-    public nombre:string,
-    public status:string,
+    public pais_nombre:string,
+    public pais_status:string,
     public createdAt:any,
     public updateAt:any
   ){}

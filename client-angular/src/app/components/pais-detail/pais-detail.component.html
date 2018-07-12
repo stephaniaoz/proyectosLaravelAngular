@@ -1,0 +1,9 @@
+<div class="col-md-12" *ngIf="pais">
+  <h1>{{pais.pais_nombre}}</h1>
+  <p>
+    {{pais.pais_nombre}}
+  </p>
+  <p>
+    <strong *ngIf="pais.pais_status == 'true' || pais.pais_status == 'ACTIVO'"><p>Este pais está ACTIVO</p></strong>
+  </p>
+</div>

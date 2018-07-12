@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DoCheck } from '@angular/core';
 import { UserService } from './services/user.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { UserService } from './services/user.service';
   styleUrls: ['./app.component.css'],
   providers: [UserService]
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit, DoCheck{
   public identity;
   public token;
 
@@ -19,4 +19,12 @@ export class AppComponent implements OnInit{
   ngOnInit(){
     console.log('app.component cargado');
   }
+
+  //cada vez que haya un cambio de propiedades en la aplicación, se ejecuta varias veces en función de lo que haga el usuario
+  ngDoCheck(){
+    //cada vez que modifique algo se va a estar actualizando el componente de manera instantanea (en este caso se hace para que al hacer el login se cargue de forma automática las cabeceras del menú en caso de estar logueado o no)
+    this.identity = this._userService.getIdentity();
+    this.token = this._userService.getToken();
+  }
+
 }

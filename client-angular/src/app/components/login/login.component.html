@@ -1,5 +1,12 @@
 <div class="col-md-12">
   <h2>{{title}}</h2>
+  <div class="alert alert-success" *ngIf="status == 'success'" role="alert">
+    <p>Usted ha sido identificado correctamente !!:</p>{{message}}
+    <a [routerLink]="['/login']">Identificate aquí</a>
+  </div>
+  <div class="alert alert-danger" *ngIf="status == 'error'" role="alert">
+    <p>No te has identificado:</p>{{message}}
+  </div>
   <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" class="col-md-5">
     <p>
       <label for="email">Email</label>

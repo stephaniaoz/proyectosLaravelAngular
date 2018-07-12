@@ -20,11 +20,21 @@ class PaisController extends Controller
     }
 
     public function show($id){
-      $pais = Pais::find($id)->load('user');
-      return response()->json(array(
-                    'pais' => $pais,
-                    'status' => 'success'
-        ),200);
+
+      $pais = Pais::find($id);
+      if(is_object($pais)){
+        $pais = Pais::find($id)->load('user');
+        return response()->json(array(
+                      'pais' => $pais,
+                      'status' => 'success'
+          ),200);
+      }else{
+        return response()->json(array(
+                      'status' => 'error',
+                      'message' => 'error el pais no existe'
+          ),200);
+      }
+
     }
 
     public function store(Request $request){
@@ -46,8 +56,8 @@ class PaisController extends Controller
         //Validaciones laravel.
         //Usamos el objeto validator si no queremos hacer el import o el use ponemos directamente la \ para que detecte el namespace
         $validate = \Validator::make($params_array, [
-          'nombre' => 'required',
-          'status' => 'required'
+          'pais_nombre' => 'required',
+          'pais_status' => 'required'
         ]);
 
         if($validate->fails()){
@@ -58,8 +68,8 @@ class PaisController extends Controller
         $pais = new Pais();
         //parametros tratar de enviarlos sin el nombre de la tabla (tabla: pais_nombre, parametros: nombre)
         $pais->user_id = $user->sub; //En sub está guardado el id dentro de mi token cuando lo decodifico.
-        $pais->pais_nombre = $params->nombre;
-        $pais->pais_status = $params->status;
+        $pais->pais_nombre = $params->pais_nombre;
+        $pais->pais_status = $params->pais_status;
         $pais->save();
 
         $data = array(
@@ -106,9 +116,16 @@ class PaisController extends Controller
         if($validate->fails()){
           return response()->json($validate->errors(),400);
         }
+        //Saco del array los datos que no voy a modificar:
+        unset($params_array['id']);
+        unset($params_array['user_id']);
+        unset($params_array['created_at']);
+        unset($params_array['user']);
+        unset($params_array['pais_id']);
 
         //Actualizar el pais
         //buscar el registro a modificar:
+
         $pais = Pais::where('pais_id',$id)->update($params_array);
 
         $data = array(

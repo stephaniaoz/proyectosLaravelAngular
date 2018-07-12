@@ -14,8 +14,12 @@ export class LoginComponent implements OnInit{
   public user: User;
   public token;
   public identity;
+  public status: string;
+  public message: string;
 
   constructor(
+    private _route: ActivatedRoute,
+    private _router: Router,
     private _userService: UserService
   ){
     this.title = 'Identificate';
@@ -24,8 +28,7 @@ export class LoginComponent implements OnInit{
 
   ngOnInit(){
     console.log('login.component cargado correctamente!!');
-    let user = this._userService.getIdentity();
-    console.log(user.name);
+    this.logout();
   }
 
   onSubmit(form){
@@ -33,26 +36,56 @@ export class LoginComponent implements OnInit{
     //subscribe para recoger lo que me devuelve el servicio
     this._userService.signup(this.user).subscribe(
       response => {
-        //Token, usar local  storage para guardar en navegador. Y poder accederlo desde cualquier parte.
-        this.token = response;
-        localStorage.setItem('token', this.token);
+        this.message = response.message;
+        if(response.status != 'error'){
+          this.status = 'success';
+          //Token, usar local  storage para guardar en navegador. Y poder accederlo desde cualquier parte.
+          this.token = response;
+          localStorage.setItem('token', this.token);
 
-        //objeto usuario identificado
-        this._userService.signup(this.user, true).subscribe(
-          response => {
-              this.identity = response;
-              //solo se puede almacenar string
-              localStorage.setItem('identity', JSON.stringify(this.identity));
-          },
-          error => {
-            console.log(<any>error);
-          }
-        );
+          //objeto usuario identificado
+          this._userService.signup(this.user, true).subscribe(
+            response => {
+                this.identity = response;
+                //solo se puede almacenar string
+                localStorage.setItem('identity', JSON.stringify(this.identity));
+
+                //Redirección:
+                this._router.navigate(['home'])
+            },
+            error => {
+              console.log(<any>error);
+            }
+          );
+        }else{
+          this.status = 'error';
+        }
       },
       error => {
         console.log(<any>error);
       }
     );
+  }
+
+  logout(){
+    //tomo el parametro que me llegue (se configura ruta y parametro en app.routing.ts)
+    this._route.params.subscribe(params => {
+      //con el (+) delante de params se convierte en un entero
+      let logout = +params['sure'];
+
+      if(logout == 1){
+        //me elimina el elemento del local storage
+        localStorage.removeItem('identity');
+        localStorage.removeItem('token');
+
+        this.identity = null;
+        this.token = null;
+
+        //redirección:
+        this._router.navigate(['home']);
+
+      }
+    });
   }
 
 }

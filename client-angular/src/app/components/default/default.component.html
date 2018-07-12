@@ -1,0 +1,33 @@
+<div class="loading" *ngIf="!paises">
+  Cargando...
+</div>
+<div class="col-md-12" *ngIf="paises">
+  <h2>{{title}}</h2>
+  <br/>
+  <table class="table table-hover table-stripped" id="cars-list">
+    <tr>
+      <th class="col-md-7">Pais</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    <tr *ngFor="let pais of paises">
+      <td class="col-md-7">
+        <a [routerLink]="['/pais', pais.pais_id]">{{pais.pais_nombre}}</a>
+      </td>
+      <td>
+        <span *ngIf="pais.pais_status == 'true' || pais.pais_status == 'ACTIVO'">
+          Activo
+        </span>
+        <span *ngIf="pais.pais_status == 'false' || pais.pais_status == 'INACTIVO'">
+          Inactivo
+        </span>
+      </td>
+      <td>
+        <a [routerLink]="['/editar-pais', pais.pais_id]" class="btn btn-warning">Editar</a>
+        <a (click)="deletePais(pais.pais_id)" class="btn btn-danger">Borrar</a>
+      </td>
+    </tr>
+  </table>
+
+
+</div>
